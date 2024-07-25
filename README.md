@@ -35,3 +35,11 @@ pip install torch-cluster
 
 pip install torcheval
 ```
+--
+Install celcomen
+--
+Then install
+```
+pip install git+https://github.com/stathismegas/celcomen
+```
+
