@@ -20,17 +20,16 @@ Then, you can activate the environment using:
 
 - Install pytorch (This version of dis2p is tested with pytorch 2.1.2 and cuda 12, install the appropriate version of pytorch for your system.)
 ```
-conda create --prefix /nfs/team205/sm58/packages/celcomen_trials/pyg_env python=3.10 -y
-conda activate /nfs/team205/sm58/packages/celcomen_trials/pyg_env
+#conda create --prefix /nfs/team205/sm58/packages/celcomen_trials/pyg_env python=3.10 -y
+#conda activate /nfs/team205/sm58/packages/celcomen_trials/pyg_env
 pip install scanpy
 pip install matplotlib
 conda install jupyterlab -y
 
 pip install ipykernel
-python -m ipykernel install --user --name pyg_env
+python -m ipykernel install --user --name celcomen_package_env
 
 pip install torch_geometric
-pip install bppy
 pip install torch torchvision torchaudio
 pip install torch-cluster
 
