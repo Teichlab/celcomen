@@ -1,3 +1,5 @@
+import torch
+
 # define the celcomen class
 class celcomen(torch.nn.Module):
     # define initialization function
