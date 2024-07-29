@@ -1,3 +1,6 @@
+import numpy as np
+import torch
+
 # define a function to derive the gex from the sphex
 def calc_gex(sphex):
     """
