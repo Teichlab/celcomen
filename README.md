@@ -18,7 +18,8 @@ Then, you can activate the environment using:
     conda activate celcomen_env
 
 
-- Install pytorch (This version of dis2p is tested with pytorch 2.1.2 and cuda 12, install the appropriate version of pytorch for your system.)
+- Install pytorch
+  
 ```
 #conda create --prefix /nfs/team205/sm58/packages/celcomen_trials/pyg_env python=3.10 -y
 #conda activate /nfs/team205/sm58/packages/celcomen_trials/pyg_env
@@ -35,7 +36,7 @@ pip install torch-cluster
 
 pip install torcheval
 ```
---
+
 Install celcomen
 --
 Then install
