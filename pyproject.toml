@@ -6,3 +6,9 @@ build-backend = "flit_core.buildapi"
 name = "celcomen"
 authors = [{name = "Stathis Megas", email = "stathismegas@gmail.com"}]
 dynamic = ["version", "description"]
+dependencies = [
+    "numpy",
+    "torch",
+    "torch_geometric",
+    "scikit-learn"
+]
