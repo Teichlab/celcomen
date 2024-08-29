@@ -1,6 +1,7 @@
 from torch_geometric.nn import GCNConv
 from sklearn.neighbors import kneighbors_graph
 import torch
+import numpy as np
 
 # define the number of neighbors (six for visium)
 n_neighbors = 6
