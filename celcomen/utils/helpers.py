@@ -45,3 +45,19 @@ def normalize_g2g(g2g):
     for idx in range(len(g2g)):
         g2g[idx, idx] = 1
     return g2g
+
+# define a function to derive the gex from the sphex
+def calc_sphex(gex):
+    """
+    Calculates the spherical expression matrix from the normal
+    """
+    # setup the gex
+    n_sgenes = gex.shape[1]-1
+    sphex = torch.from_numpy(np.zeros((gex.shape[0], n_sgenes)).astype('float32'))
+    # compute the gex
+    for idx in range(n_sgenes):
+        sphex[:,idx] = gex[:,idx]
+        for idx_ in range(idx):
+            sphex[:,idx] /= torch.sin(sphex[:,idx_])
+        sphex[:,idx] = torch.arccos(sphex[:,idx])
+    return sphex
