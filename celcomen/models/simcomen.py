@@ -21,6 +21,7 @@ class simcomen(torch.nn.Module):
         # define a tracking variable for the gene expression x matrix
         self.sphex = None
         self.gex = None
+        self.output_dim = output_dim
 
     # define a function to artificially set the g2g matrix
     def set_g2g(self, g2g):
@@ -30,7 +31,7 @@ class simcomen(torch.nn.Module):
         # set the weight as the input
         self.conv1.lin.weight = torch.nn.Parameter(g2g, requires_grad=False)
         # and then set the bias as all zeros
-        self.conv1.bias = torch.nn.Parameter(torch.from_numpy(np.zeros(output_dim).astype('float32')), requires_grad=False)
+        self.conv1.bias = torch.nn.Parameter(torch.from_numpy(np.zeros(self.output_dim).astype('float32')), requires_grad=False)
 
     # define a function to artificially set the g2g matrix
     def set_g2g_intra(self, g2g_intra):
