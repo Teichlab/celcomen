@@ -30,7 +30,7 @@ class simcomen(torch.nn.Module):
         # set the weight as the input
         self.conv1.lin.weight = torch.nn.Parameter(g2g, requires_grad=False)
         # and then set the bias as all zeros
-        self.conv1.bias = torch.nn.Parameter(torch.from_numpy(np.zeros(n_genes).astype('float32')), requires_grad=False)
+        self.conv1.bias = torch.nn.Parameter(torch.from_numpy(np.zeros(output_dim).astype('float32')), requires_grad=False)
 
     # define a function to artificially set the g2g matrix
     def set_g2g_intra(self, g2g_intra):
@@ -78,7 +78,7 @@ class simcomen(torch.nn.Module):
         # calculate mean gene expression        
         mean_genes = torch.mean(self.gex, axis=0).reshape(-1,1)  # the mean should be per connected graph
         # calculate the norm of the sum of mean genes
-        g = torch.norm(torch.mm( self.n_neighbors*self.conv1.lin.weight + 2*self.lin.weight, mean_genes))   # maybe needs to change to g = torch.norm(torch.mm(mean_genes, self.conv1.lin.weight))
+        g = torch.norm(torch.mm( self.n_neighbors*self.conv1.lin.weight + 2*self.lin.weight, mean_genes)) 
         # calculate the contribution for mean values        
         z_mean = - num_spots  * torch.mm(torch.mm(torch.t(mean_genes), self.lin.weight + 0.5 * self.n_neighbors * self.conv1.lin.weight),  mean_genes)
         # calculate the contribution gene interactions
