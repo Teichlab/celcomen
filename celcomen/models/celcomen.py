@@ -1,4 +1,6 @@
 import torch
+from torch_geometric.nn import GCNConv
+from sklearn.neighbors import kneighbors_graph
 
 # define the celcomen class
 class celcomen(torch.nn.Module):
