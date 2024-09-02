@@ -1,5 +1,5 @@
 # Cell Communication Energy (celcomen)
-Causally generative model designed to indentifiably disentangle intercellular and intracellular gene regulation.
+Causal generative model designed to indentifiably disentangle intercellular and intracellular gene regulation. Celcomen can generate counterfactual spatial transcriptomic samples by simulating the effect of local gene perturbations (activations or inhibitions). 
 
 
 Installation
@@ -17,30 +17,16 @@ Then, you can activate the environment using:
 
     conda activate celcomen_env
 
-
-- Install pytorch
-  
-```
-#conda create --prefix /nfs/team205/sm58/packages/celcomen_trials/pyg_env python=3.10 -y
-#conda activate /nfs/team205/sm58/packages/celcomen_trials/pyg_env
-pip install scanpy
-pip install matplotlib
-conda install jupyterlab -y
-
-pip install ipykernel
-python -m ipykernel install --user --name celcomen_package_env
-
-pip install torch_geometric
-pip install torch torchvision torchaudio
-pip install torch-cluster
-
-pip install torcheval
-```
-
 Install celcomen
 --
 Then install
 ```
 pip install git+https://github.com/stathismegas/celcomen
 ```
+
+Causal Disentanglement and spatial Counterfactuals
+============
+To learn intracellular and extra-cellular gene regulation and then use it to simulate inflammation conuterfactuals in specific locaitons of the tissue, follow the tutorial `analysis.perturbation_newest_celcomen.ipynb`.
+
+To speed up the training process on a GPU refer to the tutorial `train_using_dataloaders_gpu.ipynb`.
 
