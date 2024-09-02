@@ -4,6 +4,7 @@ import torch
 import torch_geometric
 #from torch_cluster.knn import knn_graph
 from sklearn.neighbors import kneighbors_graph
+import numpy as np
 
 def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, verbose: bool):
 
@@ -31,8 +32,6 @@ def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, v
         data = torch_geometric.data.Data(x=x, pos=pos, y=y, edge_index=edge_index)
         data.validate(raise_on_error=True)    # performs basic checks on the graph
         data_list.append(data)
-
-    data_list = data_list[:1]
 
     loader = DataLoader( data_list, batch_size=1, shuffle=True)
 
