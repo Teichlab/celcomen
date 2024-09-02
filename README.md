@@ -4,9 +4,6 @@ Causal generative model designed to indentifiably disentangle intercellular and 
 
 Installation
 ============
-
-Prerequisites
---
 Conda Environment
 --
 We recommend using [Anaconda](https://www.anaconda.com/)/[Miniconda](https://docs.conda.io/projects/miniconda/en/latest/) to create a conda environment for using celcomen. You can create a python environment using the following command:
