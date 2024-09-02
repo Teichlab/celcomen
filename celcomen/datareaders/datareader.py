@@ -9,6 +9,10 @@ def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, v
 
     adata = sc.read_h5ad(h5ad_path) 
 
+    sc.pp.filter_genes(adata, min_cells=5)
+    sc.pp.normalize_total(adata, target_sum=1e4)
+    sc.pp.log1p(adata)
+
     adata_list = [  adata[adata.obs[sample_id_name]==i] for i in set(adata.obs[sample_id_name])  ]
 
     data_list = []
@@ -28,6 +32,8 @@ def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, v
         data.validate(raise_on_error=True)    # performs basic checks on the graph
         data_list.append(data)
 
+    data_list = data_list[:1]
+
     loader = DataLoader( data_list, batch_size=1, shuffle=True)
 
     if verbose:
@@ -39,4 +45,3 @@ def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, v
             print()
 
     return loader
-                
