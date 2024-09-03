@@ -17,7 +17,7 @@ def calc_gex(sphex):
             gex[:,idx] = torch.cos(sphex[:,idx])
         for idx_ in range(idx):
             gex[:,idx] *= torch.sin(sphex[:,idx_])
-    return gex
+    return torch.nan_to_num(gex)
 
 # define a function to gather positions
 def get_pos(n_x, n_y):
