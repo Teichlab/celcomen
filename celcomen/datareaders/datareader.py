@@ -10,7 +10,6 @@ def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, v
 
     adata = sc.read_h5ad(h5ad_path) 
 
-    sc.pp.filter_genes(adata, min_cells=5)
     sc.pp.normalize_total(adata, target_sum=1e4)
     sc.pp.log1p(adata)
 
