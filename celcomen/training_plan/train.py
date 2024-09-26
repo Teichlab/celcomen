@@ -42,37 +42,47 @@ def train(epochs, learning_rate, model, loader, zmft_scalar=1e-1, seed=1, device
     return losses
 
 
-def train_simcomen(epochs, learning_rate, model, loader, zmft_scalar=1e-1, seed=1, device="cpu", verbose=False):
+def train_simcomen(epochs, learning_rate, model, zmft_scalar=1e-1, seed=1, device="cpu", verbose=False):
     
+    # set up the optimizer
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0)
+    # keep track of the losses per data object
     losses = []
     model.train()
     torch.manual_seed(seed)
-    
-    for epoch in tqdm(range(epochs), total=epochs):
-        losses_= []
 
-        for data in loader:
-            # move data to device
-            data = data.to(device)
-            # initialize a gene expression matrix
-            input_sphex = calc_sphex(data.x).clone().detach().numpy()
-            model.set_sphex(torch.from_numpy(input_sphex.astype('float32')))            
-            # derive the message as well as the mean field approximation
-            msg, msg_intra, log_z_mft = model(data.edge_index, 1)
-            # compute the loss and track it
-            loss = -(-log_z_mft + zmft_scalar * torch.trace(torch.mm(msg, torch.t(model.gex))) + zmft_scalar * torch.trace(torch.mm(msg_intra, torch.t(model.gex))) )
+    tmp_gexs = []
+    # work through epochs
+    for epoch in tqdm(range(epochs), total=epochs):
+        # derive the message as well as the mean field approximation
+        msg, msg_intra, log_z_mft = model(edge_index, 1)
+        if (epoch % 5) == 0:
             if device=="cpu":
-                losses_.append(loss.detach().numpy()[0][0])
+                tmp_gex = model.gex.clone().detach().numpy()
             else:
-                losses_.append(loss.detach().cpu().numpy()[0][0])
-            # derive the gradients, update, and clear
-            loss.backward()
-            optimizer.step()
-            optimizer.zero_grad()
-            
-        if verbose: print(f"Epoch={epoch}   |   Loss={np.mean(losses_)}")
-        losses.append(np.mean(losses_))
+                tmp_gex = model.gex.clone().detach().cpu().numpy()
+            tmp_gexs.append(tmp_gex)
+        # compute the loss and track it
+        loss = -(-log_z_mft + zmft_scalar * torch.trace(torch.mm(msg, torch.t(model.gex))) + zmft_scalar * torch.trace(torch.mm(msg_intra, torch.t(model.gex))) )
+        if device=="cpu":
+            losses.append(loss.detach().numpy()[0][0])
+        else:
+            losses.append(loss.detach().cpu().numpy()[0][0])        print(f"Loss={losses[-1]}")
+        # derive the gradients, update, and clear
+        if verbose: print(f"Epoch={epoch}   |   Loss={np.mean(losses[-1])}")
+        
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
 
     return losses
+
+
+
+
+
+
+
+
+
 
