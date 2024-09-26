@@ -3,7 +3,7 @@ import numpy as np
 import torch
 from ..utils.helpers import normalize_g2g, calc_sphex, calc_gex
 
-def train(num_epochs, learning_rate, model, loader, zmft_scalar=1e-1, seed=1, device="cpu", verbose=False):
+def train(epochs, learning_rate, model, loader, zmft_scalar=1e-1, seed=1, device="cpu", verbose=False):
     
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0)
     losses = []
