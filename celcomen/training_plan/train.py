@@ -67,7 +67,7 @@ def train_simcomen(epochs, learning_rate, model, zmft_scalar=1e-1, seed=1, devic
         if device=="cpu":
             losses.append(loss.detach().numpy()[0][0])
         else:
-            losses.append(loss.detach().cpu().numpy()[0][0])        print(f"Loss={losses[-1]}")
+            losses.append(loss.detach().cpu().numpy()[0][0])
         # derive the gradients, update, and clear
         if verbose: print(f"Epoch={epoch}   |   Loss={np.mean(losses[-1])}")
         
