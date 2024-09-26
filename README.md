@@ -30,5 +30,7 @@ Causal Disentanglement and spatial Counterfactuals
 ============
 To learn intracellular and extra-cellular gene regulation and then use it to simulate inflammation conuterfactuals in specific locaitons of the tissue, follow the tutorial `analysis.perturbation_newest_celcomen.ipynb`.
 
+As explained in the tutorial, the adata object should have count data, without any prior normalization or log-transformation.
+
 To speed up the training process on a GPU refer to the tutorial `train_using_dataloaders_gpu.ipynb`.
 
