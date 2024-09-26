@@ -42,3 +42,37 @@ def train(epochs, learning_rate, model, loader, zmft_scalar=1e-1, seed=1, device
     return losses
 
 
+def train_simcomen(epochs, learning_rate, model, loader, zmft_scalar=1e-1, seed=1, device="cpu", verbose=False):
+    
+    optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0)
+    losses = []
+    model.train()
+    torch.manual_seed(seed)
+    
+    for epoch in tqdm(range(epochs), total=epochs):
+        losses_= []
+
+        for data in loader:
+            # move data to device
+            data = data.to(device)
+            # initialize a gene expression matrix
+            input_sphex = calc_sphex(data.x).clone().detach().numpy()
+            model.set_sphex(torch.from_numpy(input_sphex.astype('float32')))            
+            # derive the message as well as the mean field approximation
+            msg, msg_intra, log_z_mft = model(data.edge_index, 1)
+            # compute the loss and track it
+            loss = -(-log_z_mft + zmft_scalar * torch.trace(torch.mm(msg, torch.t(model.gex))) + zmft_scalar * torch.trace(torch.mm(msg_intra, torch.t(model.gex))) )
+            if device=="cpu":
+                losses_.append(loss.detach().numpy()[0][0])
+            else:
+                losses_.append(loss.detach().cpu().numpy()[0][0])
+            # derive the gradients, update, and clear
+            loss.backward()
+            optimizer.step()
+            optimizer.zero_grad()
+            
+        if verbose: print(f"Epoch={epoch}   |   Loss={np.mean(losses_)}")
+        losses.append(np.mean(losses_))
+
+    return losses
+
