@@ -42,7 +42,7 @@ def train(epochs, learning_rate, model, loader, zmft_scalar=1e-1, seed=1, device
     return losses
 
 
-def train_simcomen(epochs, learning_rate, model, zmft_scalar=1e-1, seed=1, device="cpu", verbose=False):
+def train_simcomen(epochs, learning_rate, model, edge_index, zmft_scalar=1e-1, seed=1, device="cpu", verbose=False):
     
     # set up the optimizer
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0)
