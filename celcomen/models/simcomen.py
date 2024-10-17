@@ -106,7 +106,7 @@ class simcomen(torch.nn.Module):
         """
         # setup the gex
         n_genes = sphex.shape[1]+1
-        gex = torch.from_numpy(np.zeros((sphex.shape[0], n_genes)).astype('float32'), device=next(model.parameters()).device)
+        gex = torch.from_numpy(np.zeros((sphex.shape[0], n_genes)).astype('float32'), device=next(self.parameters()).device)
         # compute the gex
         for idx in range(n_genes):
             if idx == n_genes-1:
@@ -151,7 +151,7 @@ class simcomen(torch.nn.Module):
         """
         # setup the gex
         n_sgenes = gex.shape[1]-1
-        sphex = torch.from_numpy(np.zeros((gex.shape[0], n_sgenes)).astype('float32'), device=next(model.parameters()).device)
+        sphex = torch.from_numpy(np.zeros((gex.shape[0], n_sgenes)).astype('float32'), device=next(self.parameters()).device)
         # compute the gex
         for idx in range(n_sgenes):
             sphex[:,idx] = gex[:,idx]
