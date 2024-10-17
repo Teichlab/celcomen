@@ -58,7 +58,7 @@ class simcomen(torch.nn.Module):
         convolutes the input by the expected interactions and returns log(Z_mft)
         """
         # compute the gex
-        self.gex = calc_gex(self.sphex)
+        self.gex = self.calc_gex(self.sphex)
         # compute the message
         msg = self.conv1(self.gex, edge_index)
         # compute intracellular message
