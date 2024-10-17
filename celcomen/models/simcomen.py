@@ -99,9 +99,8 @@ class simcomen(torch.nn.Module):
             z_interaction = num_spots * torch.log((torch.exp( g) - torch.exp(- g))/( g))
         return z_interaction
 
-
     # define a function to derive the gex from the sphex
-    def calc_gex(sphex):
+    def calc_gex(self, sphex):
         """
         Calculates the gene expression matrix from the spherical
         """
@@ -146,7 +145,7 @@ class simcomen(torch.nn.Module):
         return g2g
     
     # define a function to derive the gex from the sphex
-    def calc_sphex(gex):
+    def calc_sphex(self, gex):
         """
         Calculates the spherical expression matrix from the normal
         """
