@@ -59,6 +59,8 @@ class simcomen(torch.nn.Module):
         """
         # compute the gex
         self.gex = self.calc_gex(self.sphex)
+        print( f"self.gex device is {self.gex.device}")
+        print( f"edge_index device is {edge_index.device}")
         # compute the message
         msg = self.conv1(self.gex, edge_index)
         # compute intracellular message
