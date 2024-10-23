@@ -7,6 +7,51 @@ from sklearn.neighbors import kneighbors_graph
 import numpy as np
 
 def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, verbose: bool):
+    """
+    Prepares and returns PyTorch Geometric DataLoader from a single-cell spatial transcriptomics dataset.
+
+    The function reads a single-cell AnnData object from an H5AD file, normalises the data, and generates 
+    graph data where nodes correspond to cells, and edges are created based on spatial proximity using 
+    a k-nearest neighbours graph. The data is then loaded into a PyTorch Geometric `DataLoader`.
+
+    Parameters
+    ----------
+    h5ad_path : str
+        Path to the H5AD file containing the single-cell spatial transcriptomics data.
+    sample_id_name : str
+        Name of the sample ID column in `adata.obs` to separate the dataset into different samples.
+    n_neighbors : int
+        Number of neighbours to use for constructing the k-nearest neighbours graph for spatial information.
+    verbose : bool
+        If True, prints detailed information about the DataLoader during the loading process.
+
+    Returns
+    -------
+    DataLoader
+        A PyTorch Geometric DataLoader containing the processed graph data, with each graph representing
+        a sample of cells in the dataset.
+
+    Notes
+    -----
+    - The spatial positions of the cells are used to create a k-nearest neighbours graph, with edges
+      connecting cells that are spatially close to each other.
+    - The input features for the graph (`x`) are normalised before constructing the graph.
+    - `adata.obsm["spatial"]` is used to extract the spatial coordinates of the cells.
+    - The graph data is validated using PyTorch Geometric's built-in validation method.
+
+    Examples
+    --------
+    >>> loader = get_dataset_loaders('data.h5ad', 'sample_id', n_neighbors=6, verbose=True)
+    Step 1
+    =====
+    Number of graphs in the current batch: 1
+    Data(x=[100, 33500], edge_index=[2, 500], pos=[100, 2], y=[1])
+
+    Raises
+    ------
+    ValueError
+        If there are issues with the input data during validation, e.g., if the graph is not well-formed.
+    """
 
     adata = sc.read_h5ad(h5ad_path) 
 
