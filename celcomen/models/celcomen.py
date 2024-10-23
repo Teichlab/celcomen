@@ -5,8 +5,76 @@ import numpy as np
 
 # define the celcomen class
 class celcomen(torch.nn.Module):
-    # define initialization function
+    """
+    A neural network model for gene-to-gene (G2G) and intracellular regulation, 
+    built on graph convolutions. The model also supports a mean-field theory (MFT) approximation 
+    to estimate the partition function, integrating spatial and gene expression data.
+
+    Parameters
+    ----------
+    input_dim : int
+        Dimensionality of the input features (gene expression data).
+    output_dim : int
+        Dimensionality of the output features.
+    n_neighbors : int
+        The number of neighbours used in the spatial graph to model cell-cell interactions.
+    seed : int, optional
+        Seed for random number generation to ensure reproducibility. Default is 0.
+
+    Attributes
+    ----------
+    conv1 : GCNConv
+        A graph convolutional layer that models gene-to-gene interactions (G2G).
+    lin : torch.nn.Linear
+        A linear layer that models intracellular gene regulation.
+    n_neighbors : int
+        The number of neighbours for spatial graph construction.
+    gex : torch.nn.Parameter or None
+        Stores the gene expression matrix used for the forward pass. Set to None initially.
+    
+    Methods
+    -------
+    set_g2g(g2g)
+        Sets the gene-to-gene (G2G) interaction matrix artificially.
+    set_g2g_intra(g2g_intra)
+        Sets the intracellular regulation matrix artificially.
+    set_gex(gex)
+        Sets the gene expression matrix artificially.
+    forward(edge_index, batch)
+        Forward pass to compute the gene-to-gene and intracellular messages, 
+        and the log partition function estimate.
+    log_Z_mft(edge_index, batch)
+        Computes the Mean Field Theory (MFT) approximation to the partition function.
+    z_interaction(num_spots, g)
+        Provides an approximation for the interaction term in the partition function 
+        to prevent numerical instability due to exploding exponentials.
+
+    Examples
+    --------
+    >>> model = celcomen(input_dim=1000, output_dim=100, n_neighbors=6, seed=42)
+    >>> edge_index = torch.tensor([[0, 1], [1, 0]], dtype=torch.long)
+    >>> batch = torch.tensor([0, 1], dtype=torch.long)
+    >>> model.set_gex(torch.randn(100, 1000))
+    >>> msg, msg_intra, log_z_mft = model(edge_index, batch)
+    >>> print(log_z_mft)
+    """
+    
     def __init__(self, input_dim, output_dim, n_neighbors, seed=0):
+        """
+        Initializes the celcomen model with a graph convolution layer and a linear 
+        layer for gene-to-gene and intracellular regulation, respectively.
+
+        Parameters
+        ----------
+        input_dim : int
+            Dimensionality of the input features.
+        output_dim : int
+            Dimensionality of the output features.
+        n_neighbors : int
+            Number of neighbours for constructing the spatial graph.
+        seed : int, optional
+            Random seed for reproducibility (default is 0).
+        """
         super(celcomen, self).__init__()
         # define the seed
         torch.manual_seed(seed)
@@ -22,7 +90,12 @@ class celcomen(torch.nn.Module):
     # define a function to artificially set the g2g matrix
     def set_g2g(self, g2g):
         """
-        Artifically sets the core g2g matrix to be a specified interaction matrix
+        Artificially sets the gene-to-gene (G2G) interaction matrix.
+
+        Parameters
+        ----------
+        g2g : torch.Tensor
+            A matrix representing gene-to-gene interactions to be used for graph convolution.
         """
         # set the weight as the input
         self.conv1.lin.weight = torch.nn.Parameter(g2g, requires_grad=True)
@@ -32,7 +105,12 @@ class celcomen(torch.nn.Module):
     # define a function to artificially set the g2g matrix
     def set_g2g_intra(self, g2g_intra):
         """
-        Artifically sets the core g2g intracellular matrix to be a specified matrix
+        Artificially sets the intracellular gene regulation matrix.
+
+        Parameters
+        ----------
+        g2g_intra : torch.Tensor
+            A matrix representing intracellular gene regulation interactions.
         """
         # set the weight as the input
         self.lin.weight = torch.nn.Parameter(g2g_intra, requires_grad=True)
@@ -42,15 +120,36 @@ class celcomen(torch.nn.Module):
     # define a function to artificially set the sphex matrix
     def set_gex(self, gex):
         """
-        Artifically sets the current sphex matrix
+        Sets the gene expression matrix to be used during the forward pass.
+
+        Parameters
+        ----------
+        gex : torch.Tensor
+            A matrix representing the gene expression of the cells.
         """
         self.gex = torch.nn.Parameter(gex, requires_grad=False)
         
     # define the forward pass
     def forward(self, edge_index, batch):
         """
-        Forward pass for prediction or training,
-        convolutes the input by the expected interactions and returns log(Z_mft)
+        Forward pass for the model, computing gene-to-gene and intracellular messages, 
+        and estimating the log partition function using Mean Field Theory (MFT).
+
+        Parameters
+        ----------
+        edge_index : torch.Tensor
+            Tensor representing the graph edges (connectivity between nodes/cells).
+        batch : torch.Tensor
+            Tensor representing the batch of data.
+
+        Returns
+        -------
+        msg : torch.Tensor
+            The message propagated between cells based on gene-to-gene interactions.
+        msg_intra : torch.Tensor
+            The message based on intracellular gene regulation.
+        log_z_mft : torch.Tensor
+            The Mean Field Theory approximation to the log partition function.
         """
         # compute the message
         msg = self.conv1(self.gex, edge_index)
@@ -63,10 +162,20 @@ class celcomen(torch.nn.Module):
     # define approximation function
     def log_Z_mft(self, edge_index, batch):
         """
-        Mean Field Theory approximation to the partition function. Assumptions used are:
-        - expression of values of genes are close to their mean values over the visium slide
-        - \sum_b g_{a,b} m^b >0 \forall a, where m is the mean gene expression and g is the gene-gene
-          interaction matrix.
+        Computes the Mean Field Theory (MFT) approximation to the partition function, 
+        which estimates the likelihood of gene expression states in the dataset.
+
+        Parameters
+        ----------
+        edge_index : torch.Tensor
+            Tensor representing the graph edges (connectivity between nodes/cells).
+        batch : torch.Tensor
+            Tensor representing the batch of data.
+
+        Returns
+        -------
+        log_z_mft : torch.Tensor
+            The log partition function estimated using Mean Field Theory (MFT).
         """
         # retrieve number of spots
         num_spots = self.gex.shape[0]
@@ -84,7 +193,20 @@ class celcomen(torch.nn.Module):
 
     def z_interaction(self, num_spots, g):
         """
-        Avoid exploding exponentials by returning an approximate interaction term for the partition function.
+        Avoids exploding exponentials in the partition function approximation by 
+        returning an approximate interaction term.
+
+        Parameters
+        ----------
+        num_spots : int
+            Number of spots (cells) in the dataset.
+        g : torch.Tensor
+            Norm of the sum of mean gene expressions weighted by gene-to-gene interactions.
+
+        Returns
+        -------
+        z_interaction : torch.Tensor
+            The approximated interaction term for the partition function.
         """
         if g>20:
             z_interaction = num_spots * ( g - torch.log( g) )
