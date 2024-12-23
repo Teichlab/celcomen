@@ -6,6 +6,8 @@ import torch_geometric
 from sklearn.neighbors import kneighbors_graph
 import numpy as np
 
+from scipy.spatial.distance import pdist, squareform
+
 def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, verbose: bool):
     """
     Prepares and returns PyTorch Geometric DataLoader from a single-cell spatial transcriptomics dataset.
