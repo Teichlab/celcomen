@@ -17,7 +17,7 @@ def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, v
     Parameters
     ----------
     h5ad_path : str
-        Path to the H5AD file containing the single-cell spatial transcriptomics data.
+        Path to the H5AD file containing the raw counts of the single-cell spatial transcriptomics data.
     sample_id_name : str
         Name of the sample ID column in `adata.obs` to separate the dataset into different samples.
     n_neighbors : int
@@ -55,8 +55,8 @@ def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, v
 
     adata = sc.read_h5ad(h5ad_path) 
 
-    sc.pp.normalize_total(adata, target_sum=1e4)
-    sc.pp.log1p(adata)
+    # sc.pp.normalize_total(adata, target_sum=1e6)
+    # sc.pp.log1p(adata)
 
     adata_list = [  adata[adata.obs[sample_id_name]==i] for i in set(adata.obs[sample_id_name])  ]
 
@@ -71,8 +71,9 @@ def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, v
         x = torch.div(x, norm_factor)
         y = torch.Tensor([0])   # here we will store GT value
         #edge_index = knn_graph(pos, k=n_neighbors)
-        edge_index = kneighbors_graph(pos, n_neighbors, include_self=False).todense()
-        edge_index = torch.from_numpy(np.array(np.where(edge_index)))
+        distances = squareform(pdist(df.loc[mask, ['x_centroid','y_centroid']]))
+        # compute the edges as two cell widths apart so 30µm
+        edge_index = torch.from_numpy(np.array(np.where((distances < 15)&(distances != 0)))).to('cuda')
         data = torch_geometric.data.Data(x=x, pos=pos, y=y, edge_index=edge_index)
         data.validate(raise_on_error=True)    # performs basic checks on the graph
         data_list.append(data)
