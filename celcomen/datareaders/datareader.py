@@ -8,7 +8,7 @@ import numpy as np
 
 from scipy.spatial.distance import pdist, squareform
 
-def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, verbose: bool):
+def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, device: str, verbose: bool):
     """
     Prepares and returns PyTorch Geometric DataLoader from a single-cell spatial transcriptomics dataset.
 
@@ -73,9 +73,10 @@ def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, v
         x = torch.div(x, norm_factor)
         y = torch.Tensor([0])   # here we will store GT value
         #edge_index = knn_graph(pos, k=n_neighbors)
-        distances = squareform(pdist(df.loc[mask, ['x_centroid','y_centroid']]))
+        #distances = squareform(pdist(df.loc[mask, ['x_centroid','y_centroid']]))
+        distances = squareform(pdist( adata.obsm["spatial"] ) )
         # compute the edges as two cell widths apart so 30µm
-        edge_index = torch.from_numpy(np.array(np.where((distances < 15)&(distances != 0)))).to('cuda')
+        edge_index = torch.from_numpy(np.array(np.where((distances < 15)&(distances != 0)))).to(device)
         data = torch_geometric.data.Data(x=x, pos=pos, y=y, edge_index=edge_index)
         data.validate(raise_on_error=True)    # performs basic checks on the graph
         data_list.append(data)
