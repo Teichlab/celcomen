@@ -1,5 +1,5 @@
 # Cell Communication Energy (celcomen)
-Causal generative model designed to disentangle intercellular and intracellular gene regulation with theoretical identifiability guarantees. Celcomen can generate counterfactual spatial transcriptomic samples by simulating the effect of local gene perturbations (activations or inhibitions). 
+Causal generative model designed to disentangle intercellular and intracellular gene regulation with theoretical identifiability guarantees. Celcomen can generate counterfactual spatial transcriptomic samples by simulating the effect of local perturbations, such as gene activations/inhibitations or cell insertions/deletions. 
 
 You can find out more by reading our [manuscript](https://arxiv.org/abs/2409.05804).
 
