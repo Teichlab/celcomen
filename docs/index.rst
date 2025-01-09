@@ -3,15 +3,23 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Celcomen documentation
-======================
+Celcomen
+========
+Project home page `here <https://github.com/Teichlab/celcomen>`_.
+Main workflow functions
+-----------------------
+.. autosummary::
+   :toctree:
+   
+   Celcomen.models.celcomen 
+   Celcomen.models.simcomen 
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
+   
+Utility functions
+-----------------
+.. autosummary::
+   :toctree:
+   
+   Celcomen.utils.helpers.calc_gex
 
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
 
