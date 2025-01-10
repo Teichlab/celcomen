@@ -9,17 +9,15 @@
 project = 'Celcomen'
 copyright = '2025, Stathis Megas'
 author = 'Stathis Megas'
-release = '0.0.1'
+import celcomen as cce
+release = cce.__version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = []
-
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary']
 templates_path = ['_templates']
-exclude_patterns = []
-
-
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
