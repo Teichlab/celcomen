@@ -6,20 +6,20 @@
 Celcomen
 ========
 Project home page `here <https://github.com/Teichlab/celcomen>`_.
+
 Main workflow functions
 -----------------------
 .. autosummary::
    :toctree:
    
-   Celcomen.models.celcomen 
-   Celcomen.models.simcomen 
-
+   celcomen.models.celcomen 
+   celcomen.models.simcomen 
    
 Utility functions
 -----------------
 .. autosummary::
    :toctree:
    
-   Celcomen.utils.helpers.calc_gex
+   celcomen.utils.helpers.calc_gex
 
 
