@@ -1,7 +1,7 @@
 from tqdm import tqdm
 import numpy as np
 import torch
-from ..utils.helpers import normalize_g2g, calc_sphex, calc_gex
+from ..utils.helpers import symmetrize_g2g, calc_sphex, calc_gex
 
 def train(epochs, learning_rate, model, loader, zmft_scalar=1e-1, seed=1, device="cpu", verbose=False):
     """
@@ -67,8 +67,8 @@ def train(epochs, learning_rate, model, loader, zmft_scalar=1e-1, seed=1, device
             optimizer.step()
             optimizer.zero_grad()
             # repeatedly force a normalization
-            model.conv1.lin.weight = torch.nn.Parameter(normalize_g2g(model.conv1.lin.weight), requires_grad=True)
-            model.lin.weight = torch.nn.Parameter(normalize_g2g(model.lin.weight), requires_grad=True)
+            model.conv1.lin.weight = torch.nn.Parameter(symmetrize_g2g(model.conv1.lin.weight), requires_grad=True)
+            model.lin.weight = torch.nn.Parameter(symmetrize_g2g(model.lin.weight), requires_grad=True)
             optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0)
             
         if verbose: print(f"Epoch={epoch}   |   Loss={np.mean(losses_)}")

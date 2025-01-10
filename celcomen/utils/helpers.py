@@ -124,6 +124,36 @@ def normalize_g2g(g2g):
         g2g[idx, idx] = 1
     return g2g
 
+# define a function to normalize the g2g
+def symmetrize_g2g(g2g):
+    """
+    Symmetrizes and normalizes a gene-to-gene (G2G) interaction matrix.
+
+    This function ensures that the matrix is symmetrical.
+
+    Parameters
+    ----------
+    g2g : numpy.ndarray
+        The gene-to-gene interaction matrix, typically of shape (n_genes, n_genes).
+
+    Returns
+    -------
+    g2g : numpy.ndarray
+        The normalized and symmetrized gene-to-gene interaction matrix.
+
+    Examples
+    --------
+    >>> g2g = np.array([[0.8, 0.2], [0.1, 0.7]])
+    >>> normalized_g2g = normalize_g2g(g2g)
+    >>> print(normalized_g2g)
+    array([[1. , 0.15],
+           [0.15, 1. ]])
+    """
+    # symmetrize the values
+    g2g = (g2g + g2g.T) / 2
+
+    return g2g
+
 # define a function to derive the gex from the sphex
 def calc_sphex(gex):
     """
