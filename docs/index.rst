@@ -11,7 +11,7 @@ Main workflow classes
 -----------------------
 
 The ``celcomen`` class
-**********************
+----------------------
 
 .. autoclass:: celcomen.models.celcomen
     :members:
@@ -19,7 +19,7 @@ The ``celcomen`` class
     :show-inheritance:
 
 The ``simcomen`` class
-**********************
+----------------------
 
 .. autoclass:: celcomen.models.simcomen 
     :members:
