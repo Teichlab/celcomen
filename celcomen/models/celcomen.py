@@ -6,9 +6,7 @@ import numpy as np
 # define the celcomen class
 class celcomen(torch.nn.Module):
     """
-    A neural network model for gene-to-gene (G2G) and intracellular regulation, 
-    built on graph convolutions. The model also supports a mean-field theory (MFT) approximation 
-    to estimate the partition function, integrating spatial and gene expression data.
+    A k-hop Graph Neural Network model for disentangling inter- and intra-cellular gene regulation, and then leveraging to predict spatial counterfactuals. 
 
     Parameters
     ----------
