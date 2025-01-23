@@ -17,17 +17,13 @@ The ``celcomen`` class
     :undoc-members:
     :show-inheritance:
 
-
 The ``simcomen`` class
 *****************************
 .. autoclass:: celcomen.models.simcomen 
     :members:
     :undoc-members:
     :show-inheritance:
-   
-   celcomen.models.celcomen 
-   celcomen.models.simcomen 
-   
+      
 Utility functions
 -----------------
 .. autosummary::
