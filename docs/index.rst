@@ -11,14 +11,16 @@ Main workflow classes
 -----------------------
 
 The ``celcomen`` class
-*****************************
+**********************
+
 .. autoclass:: celcomen.models.celcomen
     :members:
     :undoc-members:
     :show-inheritance:
 
 The ``simcomen`` class
-*****************************
+**********************
+
 .. autoclass:: celcomen.models.simcomen 
     :members:
     :undoc-members:
