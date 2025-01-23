@@ -9,9 +9,7 @@ n_neighbors = 6
 # define the simcomen class
 class simcomen(torch.nn.Module):
     """
-    A neural network model that integrates gene-to-gene (G2G) interactions and intracellular gene regulation,
-    using graph convolutions for spatial gene expression data. This model supports Mean Field Theory (MFT)
-    approximations for gene expression interactions.
+    A k-hop Graph Neural Network model for predicting spatial counterfactuals, such as localised perturbations.
 
     Parameters
     ----------
