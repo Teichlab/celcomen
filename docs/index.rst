@@ -7,10 +7,23 @@ Celcomen
 ========
 Project home page `here <https://github.com/Teichlab/celcomen>`_.
 
-Main workflow functions
+Main workflow classes
 -----------------------
-.. autosummary::
-   :toctree:
+
+The ``celcomen`` class
+*****************************
+.. autoclass:: celcomen.models.celcomen
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+The ``simcomen`` class
+*****************************
+.. autoclass:: celcomen.models.simcomen 
+    :members:
+    :undoc-members:
+    :show-inheritance:
    
    celcomen.models.celcomen 
    celcomen.models.simcomen 
