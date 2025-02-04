@@ -67,7 +67,7 @@ def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, d
 
     for adata in adata_list:
         pos = torch.from_numpy(adata.obsm["spatial"])
-        x = torch.from_numpy(adata.X.todense())    # here x is nodes x 33500 -> add filteration here to take "best" 100
+        x = torch.from_numpy(adata.X.todense())    
         # normalize x 
         norm_factor = torch.pow(x,2).sum(1).reshape(-1,1)
         x = torch.div(x, norm_factor)
@@ -76,7 +76,8 @@ def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, d
         #distances = squareform(pdist(df.loc[mask, ['x_centroid','y_centroid']]))
         distances = squareform(pdist( adata.obsm["spatial"] ) )
         # compute the edges as two cell widths apart so 30µm
-        edge_index = torch.from_numpy(np.array(np.where((distances < 15)&(distances != 0)))).to(device)
+        # edge_index = torch.from_numpy(np.array(np.where((distances < 15)&(distances != 0)))).to(device)
+        edge_index = torch.from_numpy(    kneighbors_graph( pos , n_neighbors=6, include_self=False).toarray()    ).to(device)
         data = torch_geometric.data.Data(x=x, pos=pos, y=y, edge_index=edge_index)
         data.validate(raise_on_error=True)    # performs basic checks on the graph
         data_list.append(data)
