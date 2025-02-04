@@ -8,7 +8,7 @@ import numpy as np
 
 from scipy.spatial.distance import pdist, squareform
 
-def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, device: str, verbose: bool):
+def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, distance: float, device: str, verbose: bool):
     """
     Prepares and returns PyTorch Geometric DataLoader from a single-cell spatial transcriptomics dataset.
 
@@ -23,7 +23,9 @@ def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, d
     sample_id_name : str
         Name of the sample ID column in `adata.obs` to separate the dataset into different samples.
     n_neighbors : int
-        Number of neighbours to use for constructing the k-nearest neighbours graph for spatial information.
+        Number of neighbours to use for constructing the k-nearest neighbours graph for spatial information.    
+    distance : float
+        Distance of neighbours to use for constructing the k-nearest neighbours graph for spatial information.
     verbose : bool
         If True, prints detailed information about the DataLoader during the loading process.
 
@@ -75,9 +77,11 @@ def get_dataset_loaders(h5ad_path: str, sample_id_name: str, n_neighbors: int, d
         #edge_index = knn_graph(pos, k=n_neighbors)
         #distances = squareform(pdist(df.loc[mask, ['x_centroid','y_centroid']]))
         distances = squareform(pdist( adata.obsm["spatial"] ) )
+        if distance!=None:
         # compute the edges as two cell widths apart so 30µm
-        # edge_index = torch.from_numpy(np.array(np.where((distances < 15)&(distances != 0)))).to(device)
-        edge_index = torch.from_numpy(    kneighbors_graph( pos , n_neighbors=6, include_self=False).toarray()    ).to(device)
+            edge_index = torch.from_numpy(np.array(np.where((distances < 15)&(distances != 0)))).to(device)
+        if n_neighbors!=None:
+            edge_index = torch.from_numpy(np.array(np.where(kneighbors_graph(adata.obsm[“spatial”], n_neighbors=6, include_self=False).toarray() == 1))).to(device)
         data = torch_geometric.data.Data(x=x, pos=pos, y=y, edge_index=edge_index)
         data.validate(raise_on_error=True)    # performs basic checks on the graph
         data_list.append(data)

@@ -5,7 +5,8 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "celcomen"
 authors = [{name = "Stathis Megas", email = "stathismegas@gmail.com"}]
-dynamic = ["version", "description"]
+version = "0.0.2"
+description = "Celcomen is a first step towards models of Virtual Tissue, which generalize models of Virtual Cells to the tissue context, and can be leveraged to predict tissue counterfactuals such as spatially localised gene knockouts"
 dependencies = [
     "numpy",
     "torch",
