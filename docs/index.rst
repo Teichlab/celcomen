@@ -32,5 +32,6 @@ Utility functions
    :toctree:
    
    celcomen.utils.helpers.calc_gex
+   celcomen.datareaders.datareader.get_dataset_loaders
 
 
