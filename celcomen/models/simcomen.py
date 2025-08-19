@@ -2,6 +2,7 @@ from torch_geometric.nn import GCNConv
 from sklearn.neighbors import kneighbors_graph
 import torch
 import numpy as np
+from typing import Optional
 #from ..utils.helpers import calc_gex
 
 # define the number of neighbors (six for visium)
@@ -99,6 +100,7 @@ class simcomen(torch.nn.Module):
         self.sphex = None
         self.gex = None
         self.output_dim = output_dim
+        self.edge_index = None
 
     # define a function to artificially set the g2g matrix
     def set_g2g(self, g2g):
@@ -337,3 +339,136 @@ class simcomen(torch.nn.Module):
             sphex[:,idx] = torch.arccos(sphex[:,idx])
         return sphex
     
+    # -------------------------
+    # Propagation-based generation (no training)
+    # -------------------------
+    def set_edge_index(self, edge_index: torch.Tensor):
+        """
+        Set graph connectivity to be used for propagation.
+
+        Parameters
+        ----------
+        edge_index : torch.Tensor
+            Edge list in COO format with shape (2, E).
+        """
+        self.edge_index = edge_index
+
+    def apply_network_propagation(
+        self,
+        initial_expression: torch.Tensor,
+        perturbation_mask_expression: Optional[torch.Tensor] = None,
+        perturbation_values_expression: Optional[torch.Tensor] = None,
+        scale_factor_gex: float = 0.5,
+        normalize: bool = True,
+    ) -> torch.Tensor:
+        """
+        Apply network propagation over the cell graph using the model's learned weights.
+
+        Parameters
+        ----------
+        initial_expression : torch.Tensor
+            Initial gene expression matrix of shape (num_cells, num_genes).
+        perturbation_mask_expression : Optional[torch.Tensor], optional
+            Boolean mask of shape (num_cells, num_genes) indicating perturbed entries, by default None.
+        perturbation_values_expression : Optional[torch.Tensor], optional
+            Values for the perturbations, same shape as the mask/value tensor, by default None.
+        scale_factor_gex : float, optional
+            Scaling factor applied to propagated messages, by default 0.5.
+        normalize : bool, optional
+            If True, L2-normalize expression per cell after propagation, by default True.
+
+        Returns
+        -------
+        torch.Tensor
+            Updated (and optionally normalized) expression matrix of shape (num_cells, num_genes).
+        """
+        if self.edge_index is None:
+            raise ValueError("edge_index must be set via set_edge_index before propagation")
+
+        num_cells, num_genes = initial_expression.shape
+
+        # Ensure dimensions are consistent with square weights (common in this codebase)
+        conv_weight = self.conv1.lin.weight  # shape: (out_dim, in_dim)
+        lin_weight = self.lin.weight         # shape: (out_dim, in_dim)
+        if not (conv_weight.shape[0] == conv_weight.shape[1] == num_genes and
+                lin_weight.shape[0] == lin_weight.shape[1] == num_genes):
+            raise ValueError(
+                "Propagation expects square weight matrices matching the number of genes. "
+                f"Got conv {tuple(conv_weight.shape)}, lin {tuple(lin_weight.shape)}, genes {num_genes}."
+            )
+
+        device = initial_expression.device
+        current_expression = initial_expression.clone()
+
+        # Build dense adjacency from edge_index
+        adjacency_matrix = torch.zeros((num_cells, num_cells), dtype=initial_expression.dtype, device=device)
+        sources = self.edge_index[0]
+        targets = self.edge_index[1]
+        adjacency_matrix[sources, targets] = 1.0
+        adjacency_matrix.fill_diagonal_(0)
+
+        # Initialize delta with explicit perturbations, if any
+        delta_expression = torch.zeros_like(initial_expression)
+        if perturbation_mask_expression is not None and perturbation_values_expression is not None:
+            delta_expression[perturbation_mask_expression] = perturbation_values_expression[perturbation_mask_expression]
+
+        # Single-step propagation using explicit perturbations
+        effective_delta = delta_expression
+
+        # Intercellular message: neighbors then apply intercellular G2G weights
+        intercellular_gene_gene = adjacency_matrix.mm(effective_delta).mm(conv_weight.t())
+        # Intracellular message: within-cell linear regulation
+        intracellular_gene_gene = effective_delta.mm(lin_weight.t())
+
+        # Update expression
+        current_expression = current_expression + (intercellular_gene_gene + intracellular_gene_gene) * scale_factor_gex
+
+        if normalize:
+            # L2-normalize per cell, avoid division by zero
+            norm = torch.linalg.norm(current_expression, dim=1, keepdim=True)
+            norm = torch.clamp(norm, min=1e-8)
+            current_expression = current_expression / norm
+
+        return current_expression
+
+    def forward_with_propagation(
+        self,
+        edge_index: torch.Tensor,
+        gene_expression: torch.Tensor,
+        perturbation_mask_expression: Optional[torch.Tensor] = None,
+        perturbation_values_expression: Optional[torch.Tensor] = None,
+        scale_factor_gex: float = 0.5,
+        normalize: bool = True,
+    ) -> torch.Tensor:
+        """
+        Forward pass that performs network propagation (no training) using the model's weights.
+
+        Parameters
+        ----------
+        edge_index : torch.Tensor
+            Edge list in COO format with shape (2, E).
+        gene_expression : torch.Tensor
+            Initial gene expression matrix of shape (num_cells, num_genes).
+        perturbation_mask_expression : Optional[torch.Tensor], optional
+            Boolean mask for perturbations, by default None.
+        perturbation_values_expression : Optional[torch.Tensor], optional
+            Values for perturbations, by default None.
+        scale_factor_gex : float, optional
+            Scaling factor applied to propagated messages, by default 0.5.
+        normalize : bool, optional
+            If True, L2-normalize expression per cell after propagation, by default True.
+
+        Returns
+        -------
+        torch.Tensor
+            Propagated (and optionally normalized) expression matrix.
+        """
+        self.set_edge_index(edge_index)
+        updated_expression = self.apply_network_propagation(
+            initial_expression=gene_expression,
+            perturbation_mask_expression=perturbation_mask_expression,
+            perturbation_values_expression=perturbation_values_expression,
+            scale_factor_gex=scale_factor_gex,
+            normalize=normalize,
+        )
+        return updated_expression
