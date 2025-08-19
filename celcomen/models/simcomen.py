@@ -472,3 +472,25 @@ class simcomen(torch.nn.Module):
             normalize=normalize,
         )
         return updated_expression
+
+
+# # Assume `sim` is a trained `simcomen` or has weights set via set_g2g/set_g2g_intra
+# # edge_index: (2, E) tensor
+# # gene_expression: (num_cells, num_genes) tensor, normalized if desired
+
+# # Optional perturbation
+# perturb_mask = torch.zeros_like(gene_expression, dtype=torch.bool)
+# perturb_vals = torch.zeros_like(gene_expression)
+# # e.g., knock down gene j in cell i:
+# # perturb_mask[i, j] = True
+# # perturb_vals[i, j] = -gene_expression[i, j]
+
+# updated_gex = sim.forward_with_propagation(
+#     edge_index=edge_index,
+#     gene_expression=gene_expression,
+#     perturbation_mask_expression=perturb_mask,
+#     perturbation_values_expression=perturb_vals,
+#     scale_factor_gex=0.5,
+#     num_steps=1,
+#     normalize=True,
+# )
