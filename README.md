@@ -1,7 +1,7 @@
 # Cell Communication Energy (celcomen)
 Causal generative model designed to disentangle intercellular and intracellular gene regulation with theoretical identifiability guarantees. Celcomen can generate counterfactual spatial transcriptomic samples by simulating the effect of local perturbations, such as gene activations/inhibitations or cell insertions/deletions. 
 
-You can find out more by reading our [manuscript](https://arxiv.org/abs/2409.05804).
+You can find out more by reading our [ICLR publication](https://openreview.net/forum?id=Tqdsruwyac) or [manuscript](https://arxiv.org/abs/2409.05804).    
 
 <p align="center">
   <img src="images/disentangling graphs and gene colocalization-2.png" width="750">
@@ -26,8 +26,12 @@ Then install
 pip install git+https://github.com/stathismegas/celcomen
 ```
 
-Causal Disentanglement and spatial Counterfactuals
+Causal Disentanglement and Spatial Counterfactuals
 ============
 To learn intracellular and extra-cellular gene regulation and then use it to simulate inflammation conuterfactuals in specific locaitons of the tissue, follow the tutorial `analysis.spatial_KO.xenium_human_glioblastoma_gpu.ipynb`.
 
 As explained in the tutorial, the adata object should have count data, without any prior normalization or log-transformation.
+
+More details about the documentation can be found on [Read the Docs](https://celcomen.readthedocs.io/en/latest/).
+
+To reproduce our results from our paper and manuscript refer to our [reproducibility repo](https://github.com/stathismegas/celcomen_reproducibility).
