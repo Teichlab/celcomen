@@ -5,6 +5,7 @@
 [![GitHub forks](https://img.shields.io/github/forks/stathismegas/celcomen?style=social)](https://github.com/stathismegas/celcomen/network/members)
 [![Documentation Status](https://readthedocs.org/projects/celcomen/badge/?version=latest)](https://celcomen.readthedocs.io/en/latest/?badge=latest)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/celcomen?label=downloads)](https://pypi.org/project/celcomen/)
 
 [![GitHub](https://img.shields.io/badge/GitHub-celcomen-181717?logo=github)](https://github.com/stathismegas/celcomen)
 
