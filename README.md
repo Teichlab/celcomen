@@ -9,10 +9,8 @@
 
 [![GitHub](https://img.shields.io/badge/GitHub-celcomen-181717?logo=github)](https://github.com/stathismegas/celcomen)
 
-Celcomen aims to fill an important gap in the literature:
-
-Genetic screens in dissociated single cells → Virtual Cells
-
+Celcomen aims to fill an important gap in the literature:  
+Genetic screens in dissociated single cells → Virtual Cells  
 Genetic screens in spatial transcriptomics → ?
 
 Celcomen is a causal generative model designed to disentangle intercellular and intracellular gene regulation with theoretical identifiability guarantees. Celcomen can then generate counterfactual spatial transcriptomic samples by simulating the effect of local perturbations.
