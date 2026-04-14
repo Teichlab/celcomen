@@ -9,7 +9,18 @@
 
 [![GitHub](https://img.shields.io/badge/GitHub-celcomen-181717?logo=github)](https://github.com/stathismegas/celcomen)
 
-Causal generative model designed to disentangle intercellular and intracellular gene regulation with theoretical identifiability guarantees. Celcomen can generate counterfactual spatial transcriptomic samples by simulating the effect of local perturbations, such as gene activations/inhibitations or cell insertions/deletions. 
+Celcomen aims to fill an important gap in the literature:
+Genetic screens in dissociated single cells → Virtual Cells
+Genetic screens in spatial transcriptomics → ?
+
+Celcomen is a causal generative model designed to disentangle intercellular and intracellular gene regulation with theoretical identifiability guarantees. Celcomen can then generate counterfactual spatial transcriptomic samples by simulating the effect of local perturbations.
+
+Celcomen can 
+- predict the effect that a genetic perturbation on a cell will have on the cell and its neighbors,
+- disentangle intra- and inter-cellular gene regulation,
+- study differential gene regulation and cell communication between conditions, such between health and disease,
+  
+By enabling in-silico screening of perturbations, it can provide access to experimentally inaccessible samples, and accelerate scientific discovery. 
 
 You can find out more by reading our [ICLR publication](https://openreview.net/forum?id=Tqdsruwyac) or [manuscript](https://arxiv.org/abs/2409.05804).    
 
